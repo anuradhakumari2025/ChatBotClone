@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 export const ChatContext = createContext();
 
 export const ChatProvider = ({ children }) => {
-  const BACKEND_URL = "https://chatgptclone-ws4s.onrender.com/api";
+  const BACKEND_URL = "/api";
   const [user, setUser] = useState(() => {
     const savedUser = localStorage.getItem("user");
     return savedUser ? JSON.parse(savedUser) : null;
