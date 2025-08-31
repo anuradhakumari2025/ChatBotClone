@@ -6,11 +6,11 @@ const app = require("./src/app");
 const { initSocketServer } = require("./src/socket/socket.server");
 const connectionToDB = require("./src/db/db");
 
-// Serve frontend dist folder as static
+// ✅ Serve frontend build (dist copied into public)
 const publicPath = path.join(__dirname, "public");
 app.use(express.static(publicPath));
 
-// Fallback for React Router
+// ✅ React Router fallback
 app.get("*", (req, res) => {
   res.sendFile(path.join(publicPath, "index.html"));
 });
@@ -18,8 +18,10 @@ app.get("*", (req, res) => {
 const httpServer = http.createServer(app);
 initSocketServer(httpServer);
 
-connectionToDB()
+// ✅ Connect DB
+connectionToDB();
 
-httpServer.listen(4000, () => {
-  console.log("Server is running on port 4000");
+const PORT = process.env.PORT || 4000;
+httpServer.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
 });
