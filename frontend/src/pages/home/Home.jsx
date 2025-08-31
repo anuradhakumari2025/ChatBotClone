@@ -1,17 +1,16 @@
-import { useState } from "react";
+import { useState, useContext, useEffect } from "react";
 import "./Home.css";
-import { useContext } from "react";
 import { ChatContext } from "../../context/ChatContext";
 import { toast } from "react-toastify";
 import axios from "axios";
 import { io } from "socket.io-client";
-import { useEffect } from "react";
 
 const Home = () => {
   const [closeSidebar, setCloseSidebar] = useState(false);
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const [input, setInput] = useState("");
   const [socket, setSocket] = useState(null);
-  const [messages, setMessages] = useState([]); // new state for chat messages
+  const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
 
   const {
@@ -23,11 +22,12 @@ const Home = () => {
     navigate,
     setUser,
   } = useContext(ChatContext);
+
   const handleSidebar = () => {
     setCloseSidebar(!closeSidebar);
   };
 
-  //Handle Logout Function
+  // Handle Logout
   const handleLogout = async () => {
     try {
       const res = await axios.get(`${BACKEND_URL}/auth/logout`);
@@ -43,7 +43,7 @@ const Home = () => {
     }
   };
 
-  //Handle New Chat Function
+  // Handle New Chat
   const handleNewChat = async () => {
     const title = prompt("Please enter chat title:");
     try {
@@ -54,10 +54,8 @@ const Home = () => {
           withCredentials: true,
         }
       );
-      console.log("res from 57", res);
       if (res.statusText == "OK") {
         const newChat = res.data.newChat;
-        console.log(newChat);
         setChatList([newChat, ...chatList]);
         setSelectedChat(newChat._id);
       }
@@ -66,7 +64,7 @@ const Home = () => {
     }
   };
 
-  //Handle Send Message Function
+  // Handle Send Message
   const handleSendMsg = async () => {
     if (!input.trim()) return;
     if (!selectedChat) {
@@ -74,7 +72,6 @@ const Home = () => {
       return;
     }
 
-    // add user message to state
     const newMessage = {
       content: input,
       role: "user",
@@ -96,7 +93,7 @@ const Home = () => {
       const res = await axios.get(`${BACKEND_URL}/chats/messages/${chatId}`, {
         withCredentials: true,
       });
-      setMessages(res.data.messages); // set messages of that chat
+      setMessages(res.data.messages);
     } catch (err) {
       console.error(err);
     }
@@ -115,39 +112,56 @@ const Home = () => {
 
   return (
     <div className="chat-container">
-      {/* <!-- Sidebar --> */}
+      {/* Overlay for mobile */}
+      {isMobileSidebarOpen && (
+        <div
+          className="sidebarOverlay"
+          onClick={() => setIsMobileSidebarOpen(false)}
+        ></div>
+      )}
+
+      {/* Sidebar */}
       <aside
-        className={closeSidebar ? "sidebarClosed" : "sidebar"}
-        id="sidebar"
+        className={`sidebar 
+          ${closeSidebar ? "sidebarClosed" : ""} 
+          ${isMobileSidebarOpen ? "mobileSidebarOpen" : ""}`}
       >
         <div className="sidebar-header">
           <div className={closeSidebar ? "closed" : "head"}>
             <div className="logo" onClick={handleSidebar}>
               <i className="ri-openai-line"></i>
             </div>
-            <div className="sidebarLogo" onClick={handleSidebar}>
-              <i className="ri-side-bar-line" title="close-sidebar"></i>
+
+            {/* Desktop collapse icon */}
+            <div className="sidebarLogo desktopOnly" onClick={handleSidebar}>
+              <i className="ri-side-bar-line" title="collapse-sidebar"></i>
+            </div>
+
+            {/* Mobile close icon */}
+            <div
+              className="sidebarLogo mobileOnly"
+              onClick={() => setIsMobileSidebarOpen(false)}
+            >
+              <i className="ri-close-line" title="close-sidebar"></i>
             </div>
           </div>
 
-          {/* Handle New Chat */}
-          <div className="newChat" onClick={handleNewChat}>
+          {/* New Chat (Desktop only) */}
+          <div className="newChat desktopOnly" onClick={handleNewChat}>
             <i className="ri-add-large-fill"></i>
             <h3>New Chat</h3>
           </div>
 
-          {/* Sub Title */}
           <h3>My Chats</h3>
         </div>
 
         <ul className="chat-list">
-          {chatList.length == 0 ? (
+          {chatList.length === 0 ? (
             <li>No Conversation</li>
           ) : (
             chatList.map((chat) => (
               <li
                 key={chat._id}
-                // onClick={() => setSelectedChat(chat._id)}
                 onClick={() => handleSelectChat(chat._id)}
                 className={selectedChat === chat._id ? "active-chat" : ""}
               >
@@ -157,53 +171,39 @@ const Home = () => {
           )}
         </ul>
 
-        {/* Handle Logout */}
         <div className="logout" onClick={handleLogout}>
           <i className="ri-logout-circle-r-line"></i> <p>Logout</p>
         </div>
       </aside>
 
-      {/* <!-- Main Chat Area --> */}
+      {/* Main Chat Area */}
       <main className={closeSidebar ? "fullChatMain" : "chat-main"}>
         {/* Header */}
         <div className="chat-header">
-          <i className="ri-menu-2-line"></i>
+          <i
+            className="ri-menu-2-line"
+            onClick={() => setIsMobileSidebarOpen(true)}
+          ></i>
           <h2>AI Chat</h2>
-          <i className="ri-add-large-fill" onClick={handleNewChat}></i>
+          {/* New Chat (Mobile only) */}
+          <i
+            className="ri-add-large-fill mobileOnly"
+            onClick={handleNewChat}
+          ></i>
         </div>
 
-        {/* <div className="chat-messages" id="chatMessages">
-          {chatList[selectedChat] &&
-          chatList[selectedChat].messages?.length > 0 ? (
-            chatList[selectedChat].messages.map((msg, i) => (
-              <div className={`message ${msg.sender}`} key={i}>
-                <p>{msg.content}</p>
-                <span className="time">{msg.time}</span>
-              </div>
-            ))
-          ) : (
-            <div className="noChat">No messages in this conversation yet.</div>
-          )}
-        </div> */}
-
+        {/* Messages */}
         <div className="chat-messages" id="chatMessages">
           {messages && messages.length > 0 ? (
             messages.map((msg, i) => (
               <div className={`message ${msg.role}`} key={i}>
                 <p>{msg.content}</p>
-                {/* <span className="time">
-          {new Date(msg.createdAt).toLocaleTimeString([], {
-            hour: "2-digit",
-            minute: "2-digit",
-          })}
-        </span> */}
               </div>
             ))
           ) : (
             <div className="noChat">No messages in this conversation yet.</div>
           )}
 
-          {/* Typing indicator */}
           {loading && (
             <div className="message bot typing">
               <p>
@@ -215,7 +215,7 @@ const Home = () => {
           )}
         </div>
 
-        {/* Handle Input message */}
+        {/* Input */}
         <div className="chat-input">
           <input
             type="text"
@@ -223,7 +223,7 @@ const Home = () => {
             onChange={(e) => setInput(e.target.value)}
             placeholder="Type a message..."
             onKeyDown={(e) => {
-              if (e.key == "Enter") handleSendMsg();
+              if (e.key === "Enter") handleSendMsg();
             }}
           />
           <button onClick={handleSendMsg}>Send</button>

@@ -16,6 +16,10 @@
 .sidebar::-webkit-scrollbar-thumb {
   background: #2e3030;
   border-radius: 4px;
+
+}
+.sidebarClosed .logout{
+  display: none;
 }
 .sidebar,
 .sidebarClosed {
@@ -32,9 +36,9 @@
 }
 .sidebarClosed {
   justify-content: center;
-  padding: 1rem 0;
   flex-direction: row;
   width: 4%;
+  overflow: hidden;
 }
 .sidebarClosed .sidebar-header .logo {
   cursor: ew-resize;
@@ -314,5 +318,49 @@
   }
   .chat-input {
     padding: 1rem;
+  }
+}
+
+
+/* Show/Hide icons based on device */
+.desktopOnly {
+  display: block;
+}
+.mobileOnly {
+  display: none;
+}
+
+/* Mobile Sidebar */
+@media (max-width: 768px) {
+  .desktopOnly {
+    display: none;
+  }
+  .mobileOnly {
+    display: block;
+  }
+
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: -100%; /* hidden */
+    height: 100%;
+    width: 70%;
+    max-width: 300px;
+    z-index: 1000;
+    transition: left 0.3s ease;
+  }
+
+  .sidebar.mobileSidebarOpen {
+    left: 0; /* slide in */
+  }
+
+  .sidebarOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 900;
   }
 }
