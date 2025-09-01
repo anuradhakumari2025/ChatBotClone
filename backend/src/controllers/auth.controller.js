@@ -18,8 +18,12 @@ module.exports.postRegisterHandler = async (req, res) => {
       password: hashedPassword,
     });
     const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET);
-    res.cookie("token", token);
-
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: true, // true for HTTPS
+      sameSite: "none", // "none" for cross-site cookies
+      domain: ".onrender.com", // optional, for subdomains
+    });
     res.status(200).json({ message: "User Registered Successfully", newUser });
     // res.redirect("/auth/login");
   } catch (error) {
@@ -39,7 +43,12 @@ module.exports.postLoginHandler = async (req, res) => {
       return res.status(400).json({ message: "Invalid password" });
     }
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
-    res.cookie("token", token);
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: true, // true for HTTPS
+      sameSite: "none", // "none" for cross-site cookies
+      domain: ".onrender.com", // optional, for subdomains
+    });
     // res.redirect("/");
     return res.status(200).json({ message: "Login Successfully", user });
   } catch (error) {
