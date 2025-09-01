@@ -111,7 +111,7 @@ const Register = () => {
           {generalError && <span className="error">{generalError}</span>}
         </form>
         <p className="switch-auth">
-          Already have an account? <Link path="/login">Login</Link>
+          Already have an account? <Link to="/login">Login</Link>
         </p>
       </div>
     </div>

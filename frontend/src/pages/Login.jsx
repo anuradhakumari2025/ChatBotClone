@@ -96,7 +96,7 @@ const Login = () => {
           {generalError && <span className="error">{generalError}</span>}
         </form>
         <p className="switch-auth">
-          Don't have an account? <Link path="/register">Register</Link>
+          Don't have an account? <Link to="/register">Register</Link>
         </p>
       </div>
     </div>
