@@ -3,6 +3,7 @@ import axios from "axios";
 import { useContext } from "react";
 import { ChatContext } from "../context/ChatContext";
 import { toast } from "react-toastify";
+import { Link } from "react-router-dom";
 
 const Login = () => {
   const [emailError, setEmailError] = useState("");
@@ -95,7 +96,7 @@ const Login = () => {
           {generalError && <span className="error">{generalError}</span>}
         </form>
         <p className="switch-auth">
-          Don't have an account? <a href="/register">Register</a>
+          Don't have an account? <Link path="/register">Register</Link>
         </p>
       </div>
     </div>
