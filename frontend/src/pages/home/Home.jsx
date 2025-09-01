@@ -30,7 +30,7 @@ const Home = () => {
   // Handle Logout
   const handleLogout = async () => {
     try {
-      const res = await axios.get(`${BACKEND_URL}/auth/logout`);
+      const res = await axios.get(`api/auth/logout`);
       if (res.statusText == "OK") {
         localStorage.removeItem("user");
         setUser(null);
@@ -48,7 +48,7 @@ const Home = () => {
     const title = prompt("Please enter chat title:");
     try {
       const res = await axios.post(
-        `${BACKEND_URL}/chats`,
+        `/api/chats`,
         { title },
         {
           withCredentials: true,
@@ -90,7 +90,7 @@ const Home = () => {
   const handleSelectChat = async (chatId) => {
     setSelectedChat(chatId);
     try {
-      const res = await axios.get(`${BACKEND_URL}/chats/messages/${chatId}`, {
+      const res = await axios.get(`/api/chats/messages/${chatId}`, {
         withCredentials: true,
       });
       setMessages(res.data.messages);

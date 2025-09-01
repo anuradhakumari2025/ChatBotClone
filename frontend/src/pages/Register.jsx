@@ -42,7 +42,7 @@ const Register = () => {
 
     try {
       const res = await axios.post(
-        `${BACKEND_URL}/auth/register`,
+        `/api/auth/register`,
         { email, password, username },
         {
           withCredentials: true,
