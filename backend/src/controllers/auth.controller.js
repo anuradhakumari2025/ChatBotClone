@@ -22,7 +22,7 @@ module.exports.postRegisterHandler = async (req, res) => {
       httpOnly: true,
       secure: true, // true for HTTPS
       sameSite: "none", // "none" for cross-site cookies
-      domain: ".onrender.com", // optional, for subdomains
+      // domain: ".onrender.com", // optional, for subdomains
     });
     res.status(200).json({ message: "User Registered Successfully", newUser });
     // res.redirect("/auth/login");
@@ -47,7 +47,7 @@ module.exports.postLoginHandler = async (req, res) => {
       httpOnly: true,
       secure: true, // true for HTTPS
       sameSite: "none", // "none" for cross-site cookies
-      domain: ".onrender.com", // optional, for subdomains
+      // domain: ".onrender.com", // optional, for subdomains
     });
     // res.redirect("/");
     return res.status(200).json({ message: "Login Successfully", user });
