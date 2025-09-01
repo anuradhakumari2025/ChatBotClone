@@ -100,7 +100,7 @@ const Home = () => {
   };
 
   useEffect(() => {
-    const tempSocket = io("http://localhost:4000", {
+    const tempSocket = io("https://chatgptclonebackend-l0c8.onrender.com", {
       withCredentials: true,
     });
     tempSocket.on("ai-reply", (message) => {
