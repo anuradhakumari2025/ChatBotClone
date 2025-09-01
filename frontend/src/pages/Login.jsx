@@ -42,7 +42,7 @@ const Login = () => {
           withCredentials: true,
         }
       );
-      if (res.statusText == "OK") {
+      // if (res.statusText == "OK") {
         toast.success(res.data.message, {
           position: "top-center",
           autoClose: 3000,
@@ -50,9 +50,10 @@ const Login = () => {
         });
         setUser(res.data.user);
         navigate("/");
-      } else {
-        toast.error(res.data.message);
-      }
+      // } 
+      // else {
+      //   toast.error(res.data.message);
+      // }
     } catch (err) {
       setGeneralError("Network Error");
       toast.error(err);
